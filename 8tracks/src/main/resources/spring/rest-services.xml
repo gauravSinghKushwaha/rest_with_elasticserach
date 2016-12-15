@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                      http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+                      http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+
+	<!-- Imports -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.swiggy.rest" />
+	<context:component-scan base-package="com.swiggy.service" />
+	<context:component-scan base-package="com.swiggy.cache" />
+	<context:component-scan base-package="com.swiggy.dao" />
+
+	<bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean">
+		<property name="servers" value="${memcached.servers}" />
+		<property name="protocol" value="${memcached.protocol}" />
+		<property name="opTimeout" value="${memcached.op.timeout}" />
+	</bean>
+
+	<!-- JAX-RS server -->
+	<jaxrs:server id="server" address="/">
+		<jaxrs:features>
+			<cxf:logging />
+		</jaxrs:features>
+		<jaxrs:serviceBeans>
+			<ref bean="playListHttpService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+			<bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<!-- JAX-RS server -->
+	<jaxrs:server id="server2" address="/explore">
+		<jaxrs:features>
+			<cxf:logging />
+		</jaxrs:features>
+		<jaxrs:serviceBeans>
+			<ref bean="exploreHttpService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+			<bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+</beans>
