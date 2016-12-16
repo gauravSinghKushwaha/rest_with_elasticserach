@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonAutoDetect(isGetterVisibility = NONE)
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PlayList extends Temp implements Serializable {
+public class PlayList implements Serializable {
 
     private static final long serialVersionUID = 4194330879941521105L;
 
