@@ -6,5 +6,6 @@
 	<import resource="classpath:spring/spring-config.xml" />
 	<import resource="classpath:spring/perf4j-context.xml" />
 	<import resource="classpath:spring/rest-services.xml" />
+	<import resource="classpath:spring/spring-embedded-elasticsearch.xml" />
 
 </beans>
