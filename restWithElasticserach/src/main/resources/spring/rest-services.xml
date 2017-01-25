@@ -13,10 +13,10 @@
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
 	<context:annotation-config />
-	<context:component-scan base-package="com.swiggy.rest" />
-	<context:component-scan base-package="com.swiggy.service" />
-	<context:component-scan base-package="com.swiggy.cache" />
-	<context:component-scan base-package="com.swiggy.dao" />
+	<context:component-scan base-package="com.gaurav.rest" />
+	<context:component-scan base-package="com.gaurav.service" />
+	<context:component-scan base-package="com.gaurav.cache" />
+	<context:component-scan base-package="com.gaurav.dao" />
 
 	<bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean">
 		<property name="servers" value="${memcached.servers}" />
@@ -30,21 +30,7 @@
 			<cxf:logging />
 		</jaxrs:features>
 		<jaxrs:serviceBeans>
-			<ref bean="playListHttpService" />
-		</jaxrs:serviceBeans>
-		<jaxrs:providers>
-			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
-			<bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper" />
-		</jaxrs:providers>
-	</jaxrs:server>
-
-	<!-- JAX-RS server -->
-	<jaxrs:server id="server2" address="/explore">
-		<jaxrs:features>
-			<cxf:logging />
-		</jaxrs:features>
-		<jaxrs:serviceBeans>
-			<ref bean="exploreHttpService" />
+			<ref bean="driverHttpService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />

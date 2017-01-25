@@ -6,8 +6,8 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 
 	<bean id="timingAspect" class="org.perf4j.log4j.aop.TimingAspect" />
+
 </beans>
