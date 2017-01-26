@@ -52,12 +52,12 @@
 	</logger>
 	
 	<logger name="org.elasticsearch" additivity="false">
-		<level value="DEBUG" />
+		<level value="INFO" />
 		<appender-ref ref="appender" />
 	</logger>
 
 	<root>
-		<priority value="DEBUG" />
+		<priority value="INFO" />
 		<appender-ref ref="appender" />
 	</root>
 </log4j:configuration>
