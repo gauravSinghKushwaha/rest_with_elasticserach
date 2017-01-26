@@ -46,6 +46,7 @@
 		<servlet-api.version>2.5</servlet-api.version>
 		<spymemcached.version>2.12.0</spymemcached.version>
 		<elasticsearch.version>5.1.1</elasticsearch.version>
+		<mustache.version>0.9.4</mustache.version>
 		<spring-data-elasticsearch.version>2.0.6.RELEASE</spring-data-elasticsearch.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -156,6 +157,11 @@
 					<artifactId>commons-lang3</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.github.spullara.mustache.java</groupId>
+			<artifactId>compiler</artifactId>
+			<version>${mustache.version}</version>
 		</dependency>
 		<!-- JNA necessary for running ES in embedded mode -->
 		<dependency>
