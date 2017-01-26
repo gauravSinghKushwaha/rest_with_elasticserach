@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:elasticsearch="http://www.springframework.org/schema/data/elasticsearch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/data/elasticsearch 
+	  http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch-1.0.xsd	">
+
+	<!-- USING EMBEDDED ES  -->
+	<!-- 	
+	<elasticsearch:transport-client id="client"
+			cluster-name="${transport.cluster.name}" cluster-nodes="${es.transport.cluster.nodes}" />
+	 -->		
+	<!--  Using NODE CLIENT created via EmbeddedElasticSearchServer -->
+	<bean name="elasticsearchTemplate"
+		class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">
+		<constructor-arg name="client" ref="nodeClient" />
+	</bean>
+	<!--  COULD USE TRANSPORT CLIENT, TRANSPORT CLIENT DOES NOT WORK WITH LOCAL ES
+	<bean name="elasticsearchTemplate"
+		class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">
+		<constructor-arg name="client" ref="transportClient" />
+	</bean>
+	 -->
+	<elasticsearch:repositories base-package="com.gaurav.elasticsearch.repo" />
+</beans>

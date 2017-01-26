@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                      http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+                      http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+
+	<!-- Embedded elastic search server, starts with application -->
+	<bean id="embeddedElasticSearchServer"
+		class="com.gaurav.elasticsearch.server.EmbeddedElasticSearchServer"
+		name="embeddedElasticSearchServer">
+		<constructor-arg index="0" type="java.util.Map">
+			<map key-type="java.lang.String" value-type="java.lang.String">
+				<entry key="node.master" value="${node.master.enabled}" />
+				<entry key="node.data" value="${node.data.enabled}" />
+				<entry key="node.ingest" value="${node.ingest.enabled}" />
+				<entry key="path.data" value="${path.data}" />
+				<entry key="network.host" value="${network.host}" />
+				<entry key="cluster.name" value="${cluster.name}" />
+				<entry key="node.name" value="${node.name}" />
+				<entry key="http.enabled" value="${http.enabled}" />
+				<entry key="http.host" value="${http.host}" />
+				<entry key="http.port" value="${http.port}" />
+				<entry key="path.home" value="${path.home}" />
+				<entry key="node.max_local_storage_nodes" value="${node.max_local_storage_nodes}" />
+				<entry key="transport.host" value="${transport.host}" />
+				<entry key="transport.tcp.port" value="${transport.tcp.port}" />
+				<entry key="transport.type" value="${transport.type}" />
+				<entry key="cluster.routing.allocation.disk.threshold_enabled"
+					value="${cluster.routing.allocation.disk.threshold_enabled}" />
+				<!-- required only if http.enable -->
+				<entry key="http.type" value="${http.type}" />
+			</map>
+		</constructor-arg>
+		<constructor-arg index="1" type="java.util.Map">
+			<map key-type="java.lang.String" value-type="java.lang.String">
+				<entry key="network.host" value="${transport.network.host}" />
+				<entry key="cluster.name" value="${transport.cluster.name}" />
+				<entry key="node.name" value="${transport.node.name}" />
+				<entry key="node.master" value="${node.master.enabled}" />
+				<entry key="node.data" value="${node.data.enabled}" />
+				<entry key="node.ingest" value="${node.ingest.enabled}" />
+				<entry key="client.transport.sniff" value="${transport.client.transport.sniff}" />
+				<entry key="client.type" value="${client.type}" />
+			</map>
+		</constructor-arg>
+		<property name="host" value="${transport.network.host}" />
+		<property name="port" value="${transport.network.port}" />
+	</bean>
+
+	<!-- TRANSPORT CLIENT WON'T WORK FOR EMBEDDED/LOCAL ELASTIC SEARCH -->
+	<!-- 
+	<bean id="transportClient" class="org.elasticsearch.client.transport.TransportClient"
+		factory-bean="embeddedElasticSearchServer" factory-method="getTransportClient"
+		depends-on="embeddedElasticSearchServer" />
+	 -->
+		
+	<!-- returns node client -->
+	<bean id="nodeClient" class="org.elasticsearch.client.Client"
+		factory-bean="embeddedElasticSearchServer" factory-method="getNodeClient"
+		depends-on="embeddedElasticSearchServer" />
+
+</beans>   
