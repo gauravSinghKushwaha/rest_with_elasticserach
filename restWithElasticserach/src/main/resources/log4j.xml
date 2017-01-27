@@ -36,7 +36,7 @@
 		<appender-ref ref="CoalescingStatistics" />
 	</logger>
 
-	<logger name="com.embedded" additivity="false">
+	<logger name="com.gaurav" additivity="false">
 		<level value="DEBUG" />
 		<appender-ref ref="appender" />
 	</logger>

@@ -24,11 +24,11 @@ public class Location implements Serializable {
 
     @JsonProperty
     @Field(type = FieldType.Float, index = FieldIndex.not_analyzed, store = true)
-    private final Float latitude;
+    private final Double latitude;
 
     @JsonProperty
     @Field(type = FieldType.Float, index = FieldIndex.not_analyzed, store = true)
-    private final Float longitude;
+    private final Double longitude;
 
     @JsonProperty
     @Field(type = FieldType.Float, index = FieldIndex.not_analyzed, store = true)
@@ -39,17 +39,17 @@ public class Location implements Serializable {
         this(null, null, null);
     }
 
-    public Location(final Float latitude, final Float longitude, final Float accuracy) {
+    public Location(final Double latitude, final Double longitude, final Float accuracy) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.accuracy = accuracy;
     }
 
-    public Float getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public Float getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 

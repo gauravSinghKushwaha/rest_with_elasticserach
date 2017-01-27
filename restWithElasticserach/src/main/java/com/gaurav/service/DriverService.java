@@ -24,7 +24,7 @@ public interface DriverService {
      * @return
      */
 
-    Optional<List<Driver>> getDrivers(final float latitude, float longitude, int radius, final int limit);
+    Optional<List<Driver>> getDrivers(final double latitude, double longitude, int radius, final int limit);
 
     /**
      * Add drivers to system

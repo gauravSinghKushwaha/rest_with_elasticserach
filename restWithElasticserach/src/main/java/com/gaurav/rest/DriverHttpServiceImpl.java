@@ -52,7 +52,7 @@ public class DriverHttpServiceImpl implements DriverHttpService {
 
     @Override
     @Profiled(tag = HTTP_GET_DRIVER, logFailuresSeparately = true)
-    public Response getDrivers(final float latitude, final float longitude, final int radius, final int limit) {
+    public Response getDrivers(final double latitude, final double longitude, final int radius, final int limit) {
         LOGGER.debug("latitude ={},longitude ={},radius ={},limit ={},", latitude, longitude, radius, limit);
         if (!validator.validateLatitude(latitude)) {
             return status(BAD_REQUEST).entity(new String("Latitude should be between +/- 90")).build();
@@ -69,17 +69,24 @@ public class DriverHttpServiceImpl implements DriverHttpService {
     @Override
     @Profiled(tag = HTTP_POST_ADD_DRIVER, logFailuresSeparately = true)
     public Response addDrivers(final List<Driver> drivers) {
+        drivers.forEach(t -> setGeoLoc(t));
         LOGGER.debug("drivers = {}", drivers);
         final Optional<List<Integer>> driverIds = driverService.addDrivers(drivers);
         LOGGER.debug("driverIds ={} ", driverIds);
         return status(CREATED).entity(WHITE_SPACE_JOINER.join(driverIds.get())).build();
     }
 
+    private void setGeoLoc(final Driver t) {
+        if (t != null) {
+            t.setGeoLoc(t.getLocation());
+        }
+    }
+
     @Override
     @Profiled(tag = HTTP_PUT_DRIVER_LOC, logFailuresSeparately = true)
     public Response updateLocation(final Driver driver, final int id) {
-        LOGGER.debug("location = {}", driver);
-
+        setGeoLoc(driver);
+        LOGGER.debug("driver = {}", driver);
         if (!validator.validateId(id)) {
             return status(NOT_FOUND).entity(valueOf("Inavalid userId")).build();
         }

@@ -7,10 +7,10 @@ import com.gaurav.model.Location;
 @Component
 public class ValidateImpl implements Validate {
 
-    float MAX_LATITUDE = 90;
-    float MIN_LATITUDE = -90;
-    float MAX_LONGITUDE = 180;
-    float MIN_LONGITUDE = -180;
+    double MAX_LATITUDE = 90;
+    double MIN_LATITUDE = -90;
+    double MAX_LONGITUDE = 180;
+    double MIN_LONGITUDE = -180;
     int DEFAULT_LIMIT = 10;
     int DEFAULT_RADIUS = 500;
 
@@ -40,12 +40,12 @@ public class ValidateImpl implements Validate {
     }
 
     @Override
-    public boolean validateLatitude(final Float latitude) {
+    public boolean validateLatitude(final Double latitude) {
         return latitude > MIN_LATITUDE && latitude < MAX_LATITUDE;
     }
 
     @Override
-    public boolean validateLongitude(final Float longitude) {
+    public boolean validateLongitude(final Double longitude) {
         return longitude > MIN_LONGITUDE && longitude < MAX_LONGITUDE;
     }
 

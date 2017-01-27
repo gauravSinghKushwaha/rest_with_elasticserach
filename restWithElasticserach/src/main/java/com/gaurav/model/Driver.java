@@ -9,8 +9,11 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.GeoPointField;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -39,15 +42,20 @@ public class Driver implements Serializable {
     @Field(type = FieldType.Nested, index = FieldIndex.not_analyzed, store = true)
     private final Location location;
 
+    @JsonIgnore
+    @GeoPointField
+    private GeoPoint geoLoc;
+
     @SuppressWarnings("unused")
     private Driver() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
-    public Driver(final Integer id, final String name, final Location location) {
+    public Driver(final Integer id, final String name, final Location location, final GeoPoint geoLoc) {
         this.id = id;
         this.name = name;
         this.location = location;
+        setGeoLoc(location);
     }
 
     @Override
@@ -102,8 +110,16 @@ public class Driver implements Serializable {
 
     @Override
     public String toString() {
-        return "Driver [id=" + id + ", name=" + name + ", location=" + location + "]";
+        return "Driver [id=" + id + ", name=" + name + ", location=" + location + ", geoLoc=" + geoLoc + "]";
     }
 
+    public GeoPoint getGeoLoc() {
+        return geoLoc;
+    }
 
+    public void setGeoLoc(final Location location) {
+        if (location != null && location.getLatitude() != null && location.getLongitude() != null) {
+            geoLoc = new GeoPoint(location.getLatitude(), location.getLongitude());
+        }
+    }
 }

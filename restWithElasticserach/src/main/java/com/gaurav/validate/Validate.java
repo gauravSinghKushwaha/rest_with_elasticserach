@@ -7,11 +7,11 @@ public interface Validate {
 
     boolean validateLatitude(final Location location);
 
-    boolean validateLatitude(final Float latitude);
+    boolean validateLatitude(final Double latitude);
 
     boolean validateLongitude(final Location location);
 
-    boolean validateLongitude(final Float longitude);
+    boolean validateLongitude(final Double longitude);
 
     Integer getRadius(final Integer radius);
 

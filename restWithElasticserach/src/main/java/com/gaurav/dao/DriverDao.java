@@ -9,7 +9,7 @@ import com.gaurav.model.Driver;
  */
 public interface DriverDao {
 
-    List<Driver> getDrivers(float latitude, float longitude, int radius, int limit);
+    List<Driver> getDrivers(double latitude, double longitude, int radius, int limit);
 
     List<Integer> addDrivers(final List<Driver> drivers);
 

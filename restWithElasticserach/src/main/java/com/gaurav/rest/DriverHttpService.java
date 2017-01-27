@@ -40,7 +40,7 @@ public interface DriverHttpService {
     @GET
     @Produces(APPLICATION_JSON)
     @Path("/drivers")
-    Response getDrivers(@QueryParam("latitude") final float latitude, @QueryParam("longitude") float longitude,
+    Response getDrivers(@QueryParam("latitude") final double latitude, @QueryParam("longitude") double longitude,
                         @QueryParam("radius") int radius, @QueryParam("limit") final int limit);
 
     /**

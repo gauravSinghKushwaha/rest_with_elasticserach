@@ -34,7 +34,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Optional<List<Driver>> getDrivers(final float latitude, final float longitude, final int radius,
+    public Optional<List<Driver>> getDrivers(final double latitude, final double longitude, final int radius,
             final int limit) {
         final String key =
                 join("::", SEARCH_DRIVER, valueOf(latitude), valueOf(longitude), valueOf(radius), valueOf(limit));
