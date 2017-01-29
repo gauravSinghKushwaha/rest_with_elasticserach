@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Cache using memcached
- * 
+ *
  * @author gkushwaha
  *
  */
@@ -42,13 +42,13 @@ public class CacheServiceImpl implements CacheService {
     public Object get(final String k) {
         final String key = createCacheKey(k);
         final Object object = memcachedClient.get(key);
-        LOGGER.debug("key = , object = ", k, object);
+        LOGGER.debug("key = {}, object = {}", k, object);
         return object;
     }
 
     @Override
     public void add(final String k, final Object v) {
-        LOGGER.debug("key = , object = ", k, v);
+        LOGGER.debug("key = {}, object = {}", k, v);
         memcachedClient.add(createCacheKey(k), cacheExpiration, v);
     }
 

@@ -3,17 +3,18 @@ package com.gaurav.validate;
 import com.gaurav.model.Location;
 
 public interface Validate {
-    boolean validateId(Integer id);
+
+    boolean validateId(final int id);
 
     boolean validateLatitude(final Location location);
 
-    boolean validateLatitude(final Double latitude);
+    boolean validateLatitude(final double latitude);
 
     boolean validateLongitude(final Location location);
 
-    boolean validateLongitude(final Double longitude);
+    boolean validateLongitude(final double longitude);
 
-    Integer getRadius(final Integer radius);
+    double getRadius(final double radius);
 
-    Integer getLimit(final Integer limit);
+    int getLimit(final int limit);
 }

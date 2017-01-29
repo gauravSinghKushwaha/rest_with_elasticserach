@@ -1,19 +1,18 @@
 package com.gaurav.model;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
+import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
+import static org.springframework.data.elasticsearch.annotations.FieldType.Integer;
+import static org.springframework.data.elasticsearch.annotations.FieldType.String;
 
 import java.io.Serializable;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldIndex;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -23,39 +22,47 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 @JsonAutoDetect(isGetterVisibility = NONE)
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Document(indexName = "driver", type = "driver")
-public class Driver implements Serializable {
+@Document(indexName = "driversearch", type = "driversearch")
+public final class Driver implements Serializable {
 
     private static final long serialVersionUID = 4194330879941521105L;
 
     @JsonProperty
     @Id
-    @Field(type = FieldType.Integer, index = FieldIndex.not_analyzed, store = true)
+    @Field(type = Integer, index = not_analyzed, store = true)
     private final Integer id;
 
     @JsonProperty
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed, store = true)
+    @Field(type = String, index = not_analyzed, store = true)
     private final String name;
 
+    /**
+     * TODO , because of some weird spring data issue queries based on this location does not workn hence we use trick
+     * like loc string field
+     */
     @JsonProperty
     @JsonUnwrapped
-    @Field(type = FieldType.Nested, index = FieldIndex.not_analyzed, store = true)
+    @GeoPointField
     private final Location location;
 
-    @JsonIgnore
+    /**
+     * TODO , because of some weird spring data issue queries based on this location does not workn hence we use trick
+     * like loc string field
+     */
+    @JsonProperty
+    @JsonUnwrapped
     @GeoPointField
-    private GeoPoint geoLoc;
+    private String loc;
 
     @SuppressWarnings("unused")
     private Driver() {
-        this(null, null, null, null);
+        this(null, null, null);
     }
 
-    public Driver(final Integer id, final String name, final Location location, final GeoPoint geoLoc) {
+    public Driver(final Integer id, final String name, final Location location) {
         this.id = id;
         this.name = name;
         this.location = location;
-        setGeoLoc(location);
     }
 
     @Override
@@ -108,18 +115,19 @@ public class Driver implements Serializable {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "Driver [id=" + id + ", name=" + name + ", location=" + location + ", geoLoc=" + geoLoc + "]";
+    public String getLoc() {
+        return loc;
     }
 
-    public GeoPoint getGeoLoc() {
-        return geoLoc;
-    }
-
-    public void setGeoLoc(final Location location) {
-        if (location != null && location.getLatitude() != null && location.getLongitude() != null) {
-            geoLoc = new GeoPoint(location.getLatitude(), location.getLongitude());
+    public void setLoc() {
+        if (location != null && location.getLatitude() > 0 && location.getLongitude() > 0) {
+            loc = location.getLatitude() + "," + location.getLongitude();
         }
     }
+
+    @Override
+    public String toString() {
+        return "Driver [id=" + id + ", name=" + name + ", location=" + location + "]";
+    }
+
 }

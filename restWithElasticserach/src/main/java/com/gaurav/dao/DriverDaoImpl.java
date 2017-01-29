@@ -1,19 +1,23 @@
 package com.gaurav.dao;
 
 import static com.gaurav.perf.PerformanceLabels.DAO_ADD_DRIVER;
+import static com.gaurav.perf.PerformanceLabels.DAO_GET_ALL_DRIVERS;
 import static com.gaurav.perf.PerformanceLabels.DAO_GET_DRIVER;
 import static com.gaurav.perf.PerformanceLabels.DAO_UPDATE_DRIVER_LOC;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
+import static org.elasticsearch.common.geo.GeoDistance.ARC;
+import static org.elasticsearch.common.unit.DistanceUnit.fromString;
+import static org.elasticsearch.index.query.QueryBuilders.geoDistanceQuery;
+import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
+import static org.elasticsearch.search.sort.SortBuilders.geoDistanceSort;
+import static org.elasticsearch.search.sort.SortOrder.ASC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.List;
 
-import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +34,8 @@ public class DriverDaoImpl implements DriverDao {
 
     private static final Logger LOG = getLogger(DriverDaoImpl.class);
     private static final int FIRST = 0;
+    private static final String LOC_FIELD = "loc";
+    private static final String METERS = "meters";
     private final DriverIndexRepo indexRepo;
 
     @Autowired
@@ -39,26 +45,50 @@ public class DriverDaoImpl implements DriverDao {
 
     @Profiled(tag = DAO_GET_DRIVER, logFailuresSeparately = true)
     @Override
-    public List<Driver> getDrivers(final double latitude, final double longitude, final int radius, final int limit) {
+    public List<Driver> getDrivers(final double latitude, final double longitude, final double radius, final int limit) {
 
-        final GeoDistanceQueryBuilder distanceFilter =
-                QueryBuilders.geoDistanceQuery("geoLoc").point(latitude, longitude)
-                .distance(radius, DistanceUnit.METERS);
+        final GeoDistanceQueryBuilder filter =
+                geoDistanceQuery(LOC_FIELD).distance(radius, fromString(METERS)).point(latitude, longitude)
+                .geoDistance(ARC);
+
+        final GeoDistanceSortBuilder sortBy =
+                geoDistanceSort(LOC_FIELD).point(latitude, longitude).geoDistance(ARC).order(ASC);
+
+        final PageRequest pageRequest = new PageRequest(FIRST, limit);
+
         final SearchQuery searchQuery =
-                new NativeSearchQueryBuilder()
-        .withFilter(distanceFilter)
-        .withSort(
-                SortBuilders.geoDistanceSort("geoLoc").point(latitude, longitude)
-                .order(SortOrder.ASC)).withPageable(new PageRequest(FIRST, limit)).build();
+                new NativeSearchQueryBuilder().withQuery(matchAllQuery()).withFilter(filter).withSort(sortBy)
+                .withPageable(pageRequest).build();
+
         final Iterable<Driver> res = indexRepo.search(searchQuery);
-        // final Iterable<Driver> res = indexRepo.search(QueryBuilders.matchAllQuery(), new PageRequest(FIRST, limit));
-        res.forEach(e -> LOG.debug("driver  = {}", e.toString()));
+
+        debug(res);
+        return newArrayList(res);
+    }
+
+    private void debug(final Iterable<Driver> res) {
+        if (LOG.isDebugEnabled()) {
+            res.forEach(t -> LOG.debug("driver ={}", t));
+        }
+    }
+
+    @Profiled(tag = DAO_GET_ALL_DRIVERS, logFailuresSeparately = true)
+    @Override
+    public List<Driver> getAllDrivers(final int limit) {
+        final PageRequest pageRequest = new PageRequest(FIRST, limit);
+        final SearchQuery searchQuery =
+                new NativeSearchQueryBuilder().withQuery(matchAllQuery()).withPageable(pageRequest).build();
+
+        final Iterable<Driver> res = indexRepo.search(searchQuery);
+
+        debug(res);
         return newArrayList(res);
     }
 
     @Profiled(tag = DAO_ADD_DRIVER, logFailuresSeparately = true)
     @Override
     public List<Integer> addDrivers(final List<Driver> drivers) {
+        drivers.forEach(t -> t.setLoc());
         final Iterable<Driver> result = indexRepo.save(drivers);
         result.forEach(e -> LOG.debug("driver={}", e));
         final List<Integer> ids = newArrayList();
@@ -71,8 +101,9 @@ public class DriverDaoImpl implements DriverDao {
     public Integer updateLocation(final Driver driver, final int id) {
         final Driver existing = indexRepo.findOne(id);
         if (existing != null) {
-            final Driver result =
-                    indexRepo.save(new Driver(existing.getId(), existing.getName(), driver.getLocation(), null));
+            final Driver entity = new Driver(existing.getId(), existing.getName(), driver.getLocation());
+            entity.setLoc();
+            final Driver result = indexRepo.save(entity);
             LOG.debug("Driver = {}", driver);
             return result != null ? id : null;
         }

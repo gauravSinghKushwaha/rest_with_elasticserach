@@ -24,7 +24,7 @@ public interface DriverService {
      * @return
      */
 
-    Optional<List<Driver>> getDrivers(final double latitude, double longitude, int radius, final int limit);
+    Optional<List<Driver>> getDrivers(final double latitude, double longitude, double radius, final int limit);
 
     /**
      * Add drivers to system
@@ -38,5 +38,13 @@ public interface DriverService {
      * Update location of the driver
      */
     Optional<Integer> updateLocation(final Driver driver, int id);
+
+    /**
+     * Get all drivers
+     * 
+     * @param limit
+     * @return
+     */
+    Optional<List<Driver>> getAllDrivers(int limit);
 
 }

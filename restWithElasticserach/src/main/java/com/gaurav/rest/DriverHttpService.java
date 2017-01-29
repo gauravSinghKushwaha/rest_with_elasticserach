@@ -41,7 +41,7 @@ public interface DriverHttpService {
     @Produces(APPLICATION_JSON)
     @Path("/drivers")
     Response getDrivers(@QueryParam("latitude") final double latitude, @QueryParam("longitude") double longitude,
-                        @QueryParam("radius") int radius, @QueryParam("limit") final int limit);
+                        @QueryParam("radius") double radius, @QueryParam("limit") final int limit);
 
     /**
      * Add drivers to system
@@ -62,6 +62,17 @@ public interface DriverHttpService {
     @Produces(TEXT_PLAIN)
     @Consumes(APPLICATION_JSON)
     @Path("/driver/{id}/location")
-    Response updateLocation(final Driver driver, @PathParam("id") int id);
+    Response updateLocation(final Driver driver, @PathParam("id") final int id);
+
+    /**
+     * Get all drivers
+     *
+     * @param limit
+     * @return
+     */
+    @GET
+    @Produces(APPLICATION_JSON)
+    @Path("/drivers/all")
+    Response getAllDrivers(@QueryParam("limit") final int limit);
 
 }

@@ -25,6 +25,7 @@ public class DriverServiceImpl implements DriverService {
 
     private static final Logger LOGGER = getLogger(DriverServiceImpl.class);
     private static final String SEARCH_DRIVER = "DRIVER::";
+    private static final CharSequence SEARCH_ALL_DRIVER = null;
 
     @Autowired
     public DriverServiceImpl(final DriverDao dao, final CacheService cacheService) {
@@ -34,7 +35,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Optional<List<Driver>> getDrivers(final double latitude, final double longitude, final int radius,
+    public Optional<List<Driver>> getDrivers(final double latitude, final double longitude, final double radius,
             final int limit) {
         final String key =
                 join("::", SEARCH_DRIVER, valueOf(latitude), valueOf(longitude), valueOf(radius), valueOf(limit));
@@ -44,6 +45,22 @@ public class DriverServiceImpl implements DriverService {
             return value;
         } else {
             final List<Driver> driverList = dao.getDrivers(latitude, longitude, radius, limit);
+            final Optional<List<Driver>> result = fromNullable(driverList);
+            cacheService.add(key, result);
+            return result;
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Optional<List<Driver>> getAllDrivers(final int limit) {
+        final String key = join("::", SEARCH_ALL_DRIVER, valueOf(limit));
+        final Optional<List<Driver>> value = (Optional<List<Driver>>) cacheService.get(key);
+        LOGGER.debug("value = {}", value);
+        if (value != null) {
+            return value;
+        } else {
+            final List<Driver> driverList = dao.getAllDrivers(limit);
             final Optional<List<Driver>> result = fromNullable(driverList);
             cacheService.add(key, result);
             return result;

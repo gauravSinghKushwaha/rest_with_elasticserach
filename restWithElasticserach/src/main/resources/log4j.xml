@@ -42,17 +42,17 @@
 	</logger>
 	
 	<logger name="org.apache.cxf" additivity="false">
-		<level value="INFO" />
+		<level value="ERROR" />
 		<appender-ref ref="appender" />
 	</logger>
 
 	<logger name="org.springframework" additivity="false">
-		<level value="INFO" />
+		<level value="ERROR" />
 		<appender-ref ref="appender" />
 	</logger>
 	
 	<logger name="org.elasticsearch" additivity="false">
-		<level value="INFO" />
+		<level value="ERROR" />
 		<appender-ref ref="appender" />
 	</logger>
 

@@ -11,22 +11,22 @@ public class ValidateImpl implements Validate {
     double MIN_LATITUDE = -90;
     double MAX_LONGITUDE = 180;
     double MIN_LONGITUDE = -180;
+    double DEFAULT_RADIUS = 500d;
     int DEFAULT_LIMIT = 10;
-    int DEFAULT_RADIUS = 500;
 
     @Override
-    public Integer getRadius(final Integer radius) {
-        return radius == null || radius <= 0 ? DEFAULT_RADIUS : radius;
+    public double getRadius(final double radius) {
+        return radius <= 0 ? DEFAULT_RADIUS : radius;
     }
 
     @Override
-    public Integer getLimit(final Integer limit) {
-        return limit == null || limit <= 0 ? DEFAULT_RADIUS : limit;
+    public int getLimit(final int limit) {
+        return limit <= 0 ? DEFAULT_LIMIT : limit;
     }
 
     @Override
-    public boolean validateId(final Integer id) {
-        return id != null && id > 0 && id <= 50000;
+    public boolean validateId(final int id) {
+        return id > 0 && id <= 50000;
     }
 
     @Override
@@ -40,12 +40,12 @@ public class ValidateImpl implements Validate {
     }
 
     @Override
-    public boolean validateLatitude(final Double latitude) {
+    public boolean validateLatitude(final double latitude) {
         return latitude > MIN_LATITUDE && latitude < MAX_LATITUDE;
     }
 
     @Override
-    public boolean validateLongitude(final Double longitude) {
+    public boolean validateLongitude(final double longitude) {
         return longitude > MIN_LONGITUDE && longitude < MAX_LONGITUDE;
     }
 

@@ -17,18 +17,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect(isGetterVisibility = NONE)
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-// @Document(indexName = "driver", type = "driver") nested
-public class Location implements Serializable {
+public final class Location implements Serializable {
 
-    private static final long serialVersionUID = 2298002544814915115L;
+    private static final long serialVersionUID = 1727234265919306052L;
 
-    @JsonProperty
+    @JsonProperty("latitude")
     @Field(type = FieldType.Float, index = FieldIndex.not_analyzed, store = true)
-    private final Double latitude;
+    private final double latitude;
 
-    @JsonProperty
+    @JsonProperty("longitude")
     @Field(type = FieldType.Float, index = FieldIndex.not_analyzed, store = true)
-    private final Double longitude;
+    private final double longitude;
 
     @JsonProperty
     @Field(type = FieldType.Float, index = FieldIndex.not_analyzed, store = true)
@@ -36,25 +35,30 @@ public class Location implements Serializable {
 
     @SuppressWarnings("unused")
     private Location() {
-        this(null, null, null);
+        this(0, 0, null);
     }
 
-    public Location(final Double latitude, final Double longitude, final Float accuracy) {
+    public Location(final double latitude, final double longitude, final Float accuracy) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.accuracy = accuracy;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
     public Float getAccuracy() {
         return accuracy;
+    }
+
+    @Override
+    public String toString() {
+        return "Location [lat=" + latitude + ", lon=" + longitude + "]";
     }
 
 }

@@ -9,10 +9,12 @@ import com.gaurav.model.Driver;
  */
 public interface DriverDao {
 
-    List<Driver> getDrivers(double latitude, double longitude, int radius, int limit);
+    List<Driver> getDrivers(double latitude, double longitude, double radius, int limit);
 
     List<Integer> addDrivers(final List<Driver> drivers);
 
     Integer updateLocation(final Driver driver, int id);
+
+    List<Driver> getAllDrivers(int limit);
 
 }

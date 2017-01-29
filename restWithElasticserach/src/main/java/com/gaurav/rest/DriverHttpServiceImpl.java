@@ -1,6 +1,7 @@
 package com.gaurav.rest;
 
-import static com.gaurav.perf.PerformanceLabels.HTTP_GET_DRIVER;
+import static com.gaurav.perf.PerformanceLabels.HTTP_GET_ALL_DRIVERS;
+import static com.gaurav.perf.PerformanceLabels.HTTP_GET_DRIVERS;
 import static com.gaurav.perf.PerformanceLabels.HTTP_POST_ADD_DRIVER;
 import static com.gaurav.perf.PerformanceLabels.HTTP_PUT_DRIVER_LOC;
 import static com.google.common.base.Joiner.on;
@@ -51,8 +52,8 @@ public class DriverHttpServiceImpl implements DriverHttpService {
     }
 
     @Override
-    @Profiled(tag = HTTP_GET_DRIVER, logFailuresSeparately = true)
-    public Response getDrivers(final double latitude, final double longitude, final int radius, final int limit) {
+    @Profiled(tag = HTTP_GET_DRIVERS, logFailuresSeparately = true)
+    public Response getDrivers(final double latitude, final double longitude, final double radius, final int limit) {
         LOGGER.debug("latitude ={},longitude ={},radius ={},limit ={},", latitude, longitude, radius, limit);
         if (!validator.validateLatitude(latitude)) {
             return status(BAD_REQUEST).entity(new String("Latitude should be between +/- 90")).build();
@@ -67,25 +68,25 @@ public class DriverHttpServiceImpl implements DriverHttpService {
     }
 
     @Override
+    @Profiled(tag = HTTP_GET_ALL_DRIVERS, logFailuresSeparately = true)
+    public Response getAllDrivers(final int limit) {
+        final Optional<List<Driver>> drivers = driverService.getAllDrivers(validator.getLimit(limit));
+        LOGGER.debug("drivers ={} ", drivers);
+        return ok().entity(drivers.get()).build();
+    }
+
+    @Override
     @Profiled(tag = HTTP_POST_ADD_DRIVER, logFailuresSeparately = true)
     public Response addDrivers(final List<Driver> drivers) {
-        drivers.forEach(t -> setGeoLoc(t));
         LOGGER.debug("drivers = {}", drivers);
         final Optional<List<Integer>> driverIds = driverService.addDrivers(drivers);
         LOGGER.debug("driverIds ={} ", driverIds);
         return status(CREATED).entity(WHITE_SPACE_JOINER.join(driverIds.get())).build();
     }
 
-    private void setGeoLoc(final Driver t) {
-        if (t != null) {
-            t.setGeoLoc(t.getLocation());
-        }
-    }
-
     @Override
     @Profiled(tag = HTTP_PUT_DRIVER_LOC, logFailuresSeparately = true)
     public Response updateLocation(final Driver driver, final int id) {
-        setGeoLoc(driver);
         LOGGER.debug("driver = {}", driver);
         if (!validator.validateId(id)) {
             return status(NOT_FOUND).entity(valueOf("Inavalid userId")).build();
