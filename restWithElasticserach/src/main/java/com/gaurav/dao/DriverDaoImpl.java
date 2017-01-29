@@ -21,6 +21,7 @@ import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
@@ -35,11 +36,12 @@ public class DriverDaoImpl implements DriverDao {
     private static final Logger LOG = getLogger(DriverDaoImpl.class);
     private static final int FIRST = 0;
     private static final String LOC_FIELD = "loc";
-    private static final String METERS = "meters";
+    private final String metric;
     private final DriverIndexRepo indexRepo;
 
     @Autowired
-    public DriverDaoImpl(final DriverIndexRepo indexRepo) {
+    public DriverDaoImpl(final DriverIndexRepo indexRepo, @Value("${radius.metric}") final String metric) {
+        this.metric = checkNotNull(metric);
         this.indexRepo = checkNotNull(indexRepo);
     }
 
@@ -48,7 +50,7 @@ public class DriverDaoImpl implements DriverDao {
     public List<Driver> getDrivers(final double latitude, final double longitude, final double radius, final int limit) {
 
         final GeoDistanceQueryBuilder filter =
-                geoDistanceQuery(LOC_FIELD).distance(radius, fromString(METERS)).point(latitude, longitude)
+                geoDistanceQuery(LOC_FIELD).distance(radius, fromString(metric)).point(latitude, longitude)
                 .geoDistance(ARC);
 
         final GeoDistanceSortBuilder sortBy =
