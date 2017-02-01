@@ -42,7 +42,7 @@
 	</logger>
 	
 	<logger name="org.apache.cxf" additivity="false">
-		<level value="ERROR" />
+		<level value="INFO" />
 		<appender-ref ref="appender" />
 	</logger>
 
