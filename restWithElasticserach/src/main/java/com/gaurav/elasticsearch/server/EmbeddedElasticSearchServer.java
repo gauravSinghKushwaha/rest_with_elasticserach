@@ -5,6 +5,8 @@ import static java.lang.Thread.sleep;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.elasticsearch.cluster.health.ClusterHealthStatus.RED;
+import static org.elasticsearch.common.settings.Settings.builder;
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.net.InetAddress;
@@ -20,7 +22,6 @@ import org.elasticsearch.common.settings.Settings.Builder;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -86,8 +87,8 @@ public class EmbeddedElasticSearchServer implements InitializingBean, Disposable
     public void afterPropertiesSet() throws Exception {
         LOG.info("Starting the Elastic Search server node ");
 
-        final Builder settingBuilder = Settings.builder().put(esServerConfiguration);
-        server = NodeBuilder.nodeBuilder().data(true).client(false).local(true).settings(settingBuilder).build();
+        final Builder settingBuilder = builder().put(esServerConfiguration);
+        server = nodeBuilder().data(true).client(false).local(true).settings(settingBuilder).build();
 
         server.start();
 
@@ -146,8 +147,6 @@ public class EmbeddedElasticSearchServer implements InitializingBean, Disposable
             LOG.error("ES cluster health status is RED. Server is not able to start.");
             checkServerStatus();
         }
-        // since it's an embedded one, and for test purpose only, we do not want to keep data gathered before start
-        deleteAllIndices();
     }
 
     public void setHost(final String host) {
