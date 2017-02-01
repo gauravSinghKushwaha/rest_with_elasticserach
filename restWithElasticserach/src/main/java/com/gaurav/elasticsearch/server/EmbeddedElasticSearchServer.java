@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.elasticsearch.cluster.health.ClusterHealthStatus.RED;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.net.InetAddress;
@@ -74,9 +75,11 @@ public class EmbeddedElasticSearchServer implements InitializingBean, Disposable
 
     @Override
     public void destroy() throws Exception {
-        server.close();
+        LOG.info("SHUTTING DOWN ELASTIC SERACH SERVER");
         deleteAllIndices();
         getNodeClient().close();
+        server.close();
+        LOG.info("SHUTTING DOWN COMPLETED");
     }
 
     @Override
@@ -88,11 +91,13 @@ public class EmbeddedElasticSearchServer implements InitializingBean, Disposable
 
         server.start();
 
-        newFixedThreadPool(1).execute(() -> checkServerStatus());
+        chechStatusAndDeleteOldData();
 
-        // since it's an embedded one, and for test purpose only, we do not want to keep data gathered before start
-        deleteAllIndices();
         LOG.info("Elastic Search server is started.");
+    }
+
+    private void chechStatusAndDeleteOldData() {
+        newFixedThreadPool(1).execute(() -> checkServerStatus());
     }
 
     private void deleteAllIndices() {
@@ -100,6 +105,7 @@ public class EmbeddedElasticSearchServer implements InitializingBean, Disposable
         if (!response.isAcknowledged()) {
             throw new IllegalStateException("Fail to delete all indices");
         }
+        LOG.info("Done deleting old data={}", response);
     }
 
     private Client getNodeClient() {
@@ -126,19 +132,22 @@ public class EmbeddedElasticSearchServer implements InitializingBean, Disposable
             LOG.error("Exception = ", ex);
         }
         ClusterHealthStatus status = getHealthStatus();
-        if (ClusterHealthStatus.RED.equals(status)) {
+        if (RED.equals(status)) {
             LOG.info("ES cluster status is {}. Waiting for ES recovery.", status);
             getNodeClient().admin().cluster().prepareHealth().setWaitForYellowStatus()
             .setTimeout(new TimeValue(TIME_OUT, SECONDS)).execute().actionGet();
         }
 
         status = getHealthStatus();
+
         LOG.info("ES Cluster status is {}, = {}", status, getNodeClient().admin().cluster().prepareNodesInfo());
 
-        if (ClusterHealthStatus.RED.equals(status)) {
+        if (RED.equals(status)) {
             LOG.error("ES cluster health status is RED. Server is not able to start.");
             checkServerStatus();
         }
+        // since it's an embedded one, and for test purpose only, we do not want to keep data gathered before start
+        deleteAllIndices();
     }
 
     public void setHost(final String host) {
