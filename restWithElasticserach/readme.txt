@@ -7,7 +7,7 @@ mvn jetty:run
 Build application using default profile dev, only runs Unit test cases
 
 3) mvn clean install -Pintegration-test
-Build application skips Unit-test cases, only runs integration tests. (test categorized using marker interface com.gaurav.test.IntegrationTest or *IT* test classes
+Build application skips Unit-test cases, only runs integration tests. (test categorized using marker interface com.gaurav.test.IntegrationTest 
 
 // change log level via log.jsp
 http://localhost:9090/driversearch/log.jsp
