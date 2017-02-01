@@ -61,6 +61,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<junit.version>4.12</junit.version>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<final.name>driversearch</final.name>
 	</properties>
@@ -105,20 +106,20 @@
 					</dependency>
 				</dependencies>
 				<configuration>
+					<skipITs>${skip.integration.tests}</skipITs>
+					<parallel>methods</parallel>
+					<threadCount>10</threadCount>
+					<includes>
+						<include>**/*.class</include>
+					</includes>
+					<!-- Tests categorized with com.gaurav.test.IntegrationTest will run as integration tests  -->
+					<groups>com.gaurav.test.IntegrationTest</groups>
 					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
 					<argLine>-Dcatalina.base=src/integration-test/resources/</argLine>
-					<skipITs>${skip.integration.tests}</skipITs>
 				</configuration>
 				<executions>
 					<execution>
 						<id>integration-tests</id>
-						<configuration>
-							<includes>
-								<include>**/*.class</include>
-							</includes>
-							<groups>com.gaurav.test.IntegrationTest
-							</groups>
-						</configuration>
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
@@ -280,12 +281,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
 			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
