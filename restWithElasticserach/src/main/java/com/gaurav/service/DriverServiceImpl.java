@@ -40,7 +40,7 @@ public class DriverServiceImpl implements DriverService {
         final String key =
                 join("::", SEARCH_DRIVER, valueOf(latitude), valueOf(longitude), valueOf(radius), valueOf(limit));
         final Optional<List<Driver>> value = (Optional<List<Driver>>) cacheService.get(key);
-        LOGGER.debug("value = {}", value);
+        LOGGER.debug("cached value = {}", value);
         if (value != null) {
             return value;
         } else {
@@ -56,7 +56,7 @@ public class DriverServiceImpl implements DriverService {
     public Optional<List<Driver>> getAllDrivers(final int limit) {
         final String key = join("::", SEARCH_ALL_DRIVER, valueOf(limit));
         final Optional<List<Driver>> value = (Optional<List<Driver>>) cacheService.get(key);
-        LOGGER.debug("value = {}", value);
+        LOGGER.debug("cached value = {}", value);
         if (value != null) {
             return value;
         } else {
