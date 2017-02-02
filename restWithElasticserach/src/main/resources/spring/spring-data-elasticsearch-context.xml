@@ -12,11 +12,13 @@
 	<elasticsearch:transport-client id="client"
 			cluster-name="${transport.cluster.name}" cluster-nodes="${es.transport.cluster.nodes}" />
 	 -->		
+	
 	<!--  Using NODE CLIENT created via EmbeddedElasticSearchServer -->
 	<bean name="elasticsearchTemplate"
 		class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">
 		<constructor-arg name="client" ref="nodeClient" />
 	</bean>
+	
 	<!--  COULD USE TRANSPORT CLIENT, TRANSPORT CLIENT DOES NOT WORK WITH LOCAL ES
 	<bean name="elasticsearchTemplate"
 		class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">

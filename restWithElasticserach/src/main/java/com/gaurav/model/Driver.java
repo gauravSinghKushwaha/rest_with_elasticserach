@@ -63,6 +63,7 @@ public final class Driver implements Serializable {
         this.id = id;
         this.name = name;
         this.location = location;
+        setLoc();
     }
 
     @Override
