@@ -32,7 +32,6 @@ Primary tech stack is.
 7) Spymemcached for memcached client
 8) Jetty 9.*
 
-
 SOME useful MAVEN COMMANDS
 
 1) runs the server at 9090

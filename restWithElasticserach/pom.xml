@@ -133,6 +133,37 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- runs memcached for integration test cases -->
+			<plugin>
+				<groupId>com.google.code.simple-spring-memcached</groupId>
+				<artifactId>jmemcached-maven-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<servers>
+						<server>
+							<port>11211</port>
+							<binary>true</binary>
+						</server>
+					</servers>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start-memcached</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop-memcached</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- runs jetty at 9090 for integration test cases -->
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
